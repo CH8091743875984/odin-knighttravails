@@ -30,6 +30,19 @@ function possibleMoves(x, y) {
   return legalSquares;
 }
 
+function boardAdjacencyList() {
+  let obj = {};
+
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      //array key gets coerced to string, doing a map would probably be worse
+      obj[[x, y]] = possibleMoves(x, y);
+    }
+  }
+
+  return obj;
+}
+
 console.log("moves from 0,0");
 console.log(possibleMoves(0, 0));
 
@@ -41,3 +54,6 @@ console.log(possibleMoves(7, 7));
 
 console.log("moves from 2,1");
 console.log(possibleMoves(2, 1));
+
+console.log("board adjacency list");
+console.log(boardAdjacencyList());
