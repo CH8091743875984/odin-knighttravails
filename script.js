@@ -13,24 +13,27 @@ function possibleMoves(x, y) {
   let legalMovement = [];
 
   allowedMovement.forEach((movement) => {
-    if (
-      x + movement[0] >= 0 &&
-      x + movement[0] < 8 &&
-      y + movement[1] >= 0 &&
-      y + movement[1] < 8
-    )
+    if (legalSquare(x + movement[0], y + movement[1]))
       legalMovement.push(movement);
   });
 
   let legalSquares = [];
 
   legalMovement.forEach((move) => {
-    legalSquares.push([x + move[0], y + move[1]]);
+    //would prefer to do [x,y] as lists but converting back and forth is a pain
+    legalSquares.push([x + move[0], y + move[1]].toString());
   });
   return legalSquares;
 }
 
+function legalSquare(x, y) {
+  //given x & y coords, is the square in the bounds of an 8x8 board (zero indexed)
+  return x >= 0 && x < 8 && y >= 0 && y < 8;
+}
+
 function boardAdjacencyList() {
+  //for every square on the board, generate an adjacency list for a Knight and all possible moves per board square
+  //keys are strings, not lists
   let obj = {};
 
   for (let x = 0; x < 8; x++) {
@@ -43,17 +46,65 @@ function boardAdjacencyList() {
   return obj;
 }
 
-console.log("moves from 0,0");
-console.log(possibleMoves(0, 0));
+function knightMoves(start, end) {
+  //given start and end coordinates, calculate least number of moves and provide the path to get between the coordinates
+  //start and end are entered as strings, as in "x,y"
+  //uses BFS across a graph
+  const graph = boardAdjacencyList();
+  console.log(graph);
+  let bfsInfo = [];
 
-console.log("moves from 4,4");
-console.log(possibleMoves(4, 4));
+  let squares = Object.keys(graph);
 
-console.log("moves from 7,7");
-console.log(possibleMoves(7, 7));
+  squares.forEach((square) => {
+    bfsInfo[square] = { distance: null, predecessor: null };
+  });
 
-console.log("moves from 2,1");
-console.log(possibleMoves(2, 1));
+  console.log("BFS info:");
+  console.log(bfsInfo);
 
-console.log("board adjacency list");
-console.log(boardAdjacencyList());
+  bfsInfo[start].distance = 0;
+
+  let queue = [];
+  queue.push(start);
+
+  while (queue.length > 0) {
+    console.log("queue start:");
+    console.log(queue);
+    console.log("**here is U**");
+    let u = queue.shift();
+    console.log(u);
+    for (let i = 0; i < graph[u].length; i++) {
+      let v = graph[u][i];
+      console.log("here is v");
+      console.log(v);
+
+      if (bfsInfo[v].distance === null) {
+        bfsInfo[v].predecessor = u;
+        bfsInfo[v].distance = bfsInfo[u].distance + 1;
+        if (v === end) {
+          //once the end coord is found, go backwards along the predecessors
+          //and log the squares, stopping when we get to the start
+
+          let pred = v;
+          let path = "";
+
+          while (pred !== null) {
+            path = "[" + pred + "] " + path;
+            pred = bfsInfo[pred].predecessor;
+            console.log(path);
+          }
+
+          console.log("found it!");
+          console.log(bfsInfo);
+          console.log(path);
+          return bfsInfo[v].distance;
+        } else {
+          queue.push(v);
+        }
+      }
+    }
+  }
+}
+
+console.log(knightMoves("0,0", "7,7"));
