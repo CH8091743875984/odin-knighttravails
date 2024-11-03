@@ -51,7 +51,7 @@ function knightMoves(start, end) {
   //start and end are entered as strings, as in "x,y"
   //uses BFS across a graph
   const graph = boardAdjacencyList();
-  console.log(graph);
+  // console.log(graph);
   let bfsInfo = [];
 
   let squares = Object.keys(graph);
@@ -60,8 +60,8 @@ function knightMoves(start, end) {
     bfsInfo[square] = { distance: null, predecessor: null };
   });
 
-  console.log("BFS info:");
-  console.log(bfsInfo);
+  // console.log("BFS info:");
+  // console.log(bfsInfo);
 
   bfsInfo[start].distance = 0;
 
@@ -69,15 +69,15 @@ function knightMoves(start, end) {
   queue.push(start);
 
   while (queue.length > 0) {
-    console.log("queue start:");
-    console.log(queue);
-    console.log("**here is U**");
+    // console.log("queue start:");
+    // console.log(queue);
+    // console.log("**here is U**");
     let u = queue.shift();
-    console.log(u);
+    // console.log(u);
     for (let i = 0; i < graph[u].length; i++) {
       let v = graph[u][i];
-      console.log("here is v");
-      console.log(v);
+      // console.log("here is v");
+      // console.log(v);
 
       if (bfsInfo[v].distance === null) {
         bfsInfo[v].predecessor = u;
@@ -92,13 +92,24 @@ function knightMoves(start, end) {
           while (pred !== null) {
             path = "[" + pred + "] " + path;
             pred = bfsInfo[pred].predecessor;
-            console.log(path);
+            // console.log(path);
           }
 
-          console.log("found it!");
-          console.log(bfsInfo);
-          console.log(path);
-          return bfsInfo[v].distance;
+          // console.log("found it!");
+          // console.log(bfsInfo);
+          // console.log(path);
+          let moves = bfsInfo[v].distance;
+
+          return (
+            "You made it in " +
+            moves +
+            " moves from [" +
+            start +
+            "] to [" +
+            end +
+            "]! Your path was: " +
+            path
+          );
         } else {
           queue.push(v);
         }
@@ -107,4 +118,4 @@ function knightMoves(start, end) {
   }
 }
 
-console.log(knightMoves("0,0", "7,7"));
+console.log(knightMoves("0,0", "5,5"));
